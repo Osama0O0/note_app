@@ -32,7 +32,7 @@ class DatabaseHelper {
     ''');
   }
 
-  Future<int> insertNotes(Map<String, dynamic> row) async {
+  Future<int> insertNote(Map<String, dynamic> row) async {
     final db = await instance.database;
     return await db.insert('notes', row);
   }
