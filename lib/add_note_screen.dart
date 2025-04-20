@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:notes/database_helper.dart';
 
 class AddNoteScreen extends StatefulWidget {
-  const AddNoteScreen({super.key});
+  final Map<String, dynamic>? note;
+
+  const AddNoteScreen({super.key, this.note});
 
   @override
   State<AddNoteScreen> createState() => _AddNoteScreenState();
@@ -11,18 +13,39 @@ class AddNoteScreen extends StatefulWidget {
 class _AddNoteScreenState extends State<AddNoteScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
+  bool _isEditing = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.note != null) {
+      _titleController.text = widget.note!['title'];
+      _contentController.text = widget.note!['content'];
+      _isEditing = true;
+    }
+  }
 
   _saveNote() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
 
     if (title.isNotEmpty && content.isNotEmpty) {
-      final note = {
+      final note = <String, dynamic>{
         'title': title,
         'content': content,
         'dateCreated': DateTime.now().toString(),
       };
-      await DatabaseHelper.instance.insertNote(note);
+
+      if (_isEditing) {
+        note['id'] = widget.note!['id'] is String
+            ? int.parse(widget.note!['id'])
+            : widget.note!['id'] as int;
+
+        await DatabaseHelper.instance.updateNote(note);
+      } else {
+        await DatabaseHelper.instance.insertNote(note);
+      }
+
       if (mounted) {
         Navigator.pop(context);
       }
@@ -39,9 +62,9 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
-        title: const Text(
-          '✍️ إضافة ملاحظة',
-          style: TextStyle(color: Colors.white),
+        title: Text(
+          _isEditing ? '✍️ تعديل الملاحظة' : '✍️ إضافة ملاحظة',
+          style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
         elevation: 0,

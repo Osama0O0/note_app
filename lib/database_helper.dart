@@ -41,4 +41,29 @@ class DatabaseHelper {
     final db = await instance.database;
     return await db.query('notes');
   }
+
+  Future<int> updateNote(Map<String, dynamic> row) async {
+    final db = await instance.database;
+    int id = row['id'] as int;
+    return await db.update(
+      'notes',
+      row,
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int> deleteNote(int id) async {
+    try {
+      final db = await instance.database;
+      return await db.delete(
+        'notes',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      print('Error deleting note: $e');
+      return 0;
+    }
+  }
 }
