@@ -5,6 +5,6 @@ void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: NotesScreen(),
-    // test comment
+    // test comment 1
   ));
 }
