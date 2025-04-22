@@ -102,15 +102,18 @@ class _NotesScreenState extends State<NotesScreen> {
       body: _notes.isEmpty
           ? const Center(
               child: Text(
-              'لا توجد مذكرات بعد 😴',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ))
+                'لا توجد مذكرات بعد 😴',
+                style: TextStyle(fontSize: 18, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+            )
           : ListView.builder(
               padding: const EdgeInsets.all(12),
               itemCount: _notes.length,
               itemBuilder: (context, index) {
                 final note = _notes[index];
                 final noteId = _parseNoteId(note['id']);
+
                 return Dismissible(
                   key: Key(noteId.toString()),
                   direction: DismissDirection.endToStart,
@@ -128,8 +131,10 @@ class _NotesScreenState extends State<NotesScreen> {
                           ),
                           TextButton(
                             onPressed: () => Navigator.of(context).pop(true),
-                            child: const Text('حذف',
-                                style: TextStyle(color: Colors.red)),
+                            child: const Text(
+                              'حذف',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ],
                       ),
@@ -144,43 +149,51 @@ class _NotesScreenState extends State<NotesScreen> {
                   ),
                   onDismissed: (direction) => _deleteNote(noteId),
                   child: Card(
-                    elevation: 4,
-                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    elevation: 5,
+                    margin: const EdgeInsets.symmetric(vertical: 10),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.all(16),
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 16),
                       title: Text(
-                        textAlign: TextAlign.right,
-                        overflow: TextOverflow.ellipsis,
                         note['title'],
                         style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                          color: Colors.black87,
                         ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
                       ),
-                      subtitle: Padding(
-                        padding: const EdgeInsets.only(top: 8),
-                        child: Text(
-                          textAlign: TextAlign.right,
-                          note['content'],
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const SizedBox(height: 8),
                           Text(
-                            _formatDate(note['dateCreated']),
-                            style: const TextStyle(
-                                fontSize: 12, color: Colors.grey),
+                            note['content'],
+                            style: const TextStyle(fontSize: 16),
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red),
-                            onPressed: () => _deleteNote(noteId),
+                          const SizedBox(height: 10),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                _formatDate(note['dateCreated']),
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () => _deleteNote(noteId),
+                              ),
+                            ],
                           ),
                         ],
                       ),
